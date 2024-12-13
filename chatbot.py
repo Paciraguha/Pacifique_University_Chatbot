@@ -102,7 +102,7 @@ qa_dict = {
     "hi": "Hi there! How can I assist you today?",
     "Hello": "Hello, I'm UniChatbot, your friendly AI assistant! I'm here to help you with any questions about our university, from courses and admissions to campus life and beyond. How can I assist you today?",
     "Hi!": "Hi there! How can I assist you today?",
-    "who are you?": "Hello, I'm UniChatbot, your friendly AI assistant! I'm here to help you with any questions about our university, from courses and admissions to campus life and beyond. How can I assist you today?",
+    "who are you?": "I'm UniChatbot, your friendly AI assistant! I'm here to help you with any questions about our university, from courses and admissions to campus life and beyond. How can I assist you today?",
     "Thank you": "You're welcome! Let me know if you have more questions.",
     "Much appreciated": "Happy to help! Feel free to ask anytime.",
     "Thanks a lot": "You're most welcome. Is there anything else I can assist with?",

@@ -15,7 +15,7 @@
             <div class="chat-message message-bot">Hello! How can I assist you today?</div>
         </div>
         <div class="chatbot-footer">
-            <input type="text" class="chat-input" id="chatInput" placeholder="Type your message here..." onkeydown="checkEnter(event)">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Type your Question here..." onkeydown="checkEnter(event)">
             <button class="send-button" onclick="sendMessage()">Send</button>
         </div>
     </div>
@@ -24,12 +24,19 @@
     </div>
 
     <script>
+        let lastUserMessage = ""; // Variable to store the last user message
+
         function sendMessage() {
             const chatBody = document.getElementById('chatBody');
             const chatInput = document.getElementById('chatInput');
             const message = chatInput.value.trim();
 
             if (message) {
+                // Store the message as the last user message
+                if (message.toLowerCase() !== "replay") {
+                    lastUserMessage = message;
+                }
+
                 // Display user message
                 const userMessage = document.createElement('div');
                 userMessage.className = 'chat-message message-user';
@@ -40,25 +47,39 @@
                 chatInput.value = '';
                 chatBody.scrollTop = chatBody.scrollHeight;
 
-                // Call backend (Flask) to get bot's response
-                fetch('/get_response', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: `question=${encodeURIComponent(message)}`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // Display bot's response
+                // Check for "replay" command
+                if (message.toLowerCase() === "replay") {
                     const botReply = document.createElement('div');
                     botReply.className = 'chat-message message-bot';
-                    botReply.textContent = data.response;
+                    if (lastUserMessage) {
+                        botReply.textContent = `You said: "${lastUserMessage}"`;
+                    } else {
+                        botReply.textContent = "I have no message to replay.";
+                    }
                     chatBody.appendChild(botReply);
                     chatBody.scrollTop = chatBody.scrollHeight;
-                });
+                } else {
+                    // Call backend (Flask) to get bot's response
+                    fetch('/get_response', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: `question=${encodeURIComponent(message)}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Display bot's response
+                        const botReply = document.createElement('div');
+                        botReply.className = 'chat-message message-bot';
+                        botReply.textContent = data.response;
+                        chatBody.appendChild(botReply);
+                        chatBody.scrollTop = chatBody.scrollHeight;
+                    });
+                }
             }
         }
+
         function checkEnter(event) {
             // Check if the Enter key (keyCode 13) is pressed
             if (event.key === 'Enter') {
