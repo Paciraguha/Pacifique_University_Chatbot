@@ -4,89 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>University Chatbot</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #e3f2fd;
-        }
-
-        .chatbox {
-            background: #fff;
-            border: 2px solid #0b6b9e;
-            border-radius: 8px;
-            width: 40%;
-            padding: 20px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-            text-align: center;
-        }
-
-        .chatbox h1 {
-            font-size: 26px;
-            color: #0288d1;
-            margin-bottom: 20px;
-        }
-
-        .chatbox form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .chatbox input[type='text'] {
-            width: 90%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-
-        .chatbox button {
-            padding: 10px 20px;
-            background-color: #0288d1;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-
-        .chatbox button:hover {
-            background-color: #01579b;
-        }
-
-        .response {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #333;
-        }
-
-        .copy {
-            color: rgb(30, 1, 221);
-        }
-    </style>
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <div class="chatbox">
-        <h1>Welcome to University Chatbot</h1>
-        <form method="POST">
-            <input type="text" name="question" placeholder="Ask me a question..." required>
-            <button type="submit">Ask</button>
-        </form>
-        {% if response %}
-        <div class="response">
-            <p>{{ response }}</p>
+    <div class="chatbot-container">
+        <div class="chatbot-header">
+            Welcome to University Chatbot
         </div>
-        {% endif %}
+        <div class="chatbot-body" id="chatBody">
+            <div class="chat-message message-bot">Hello! How can I assist you today?</div>
+        </div>
+        <div class="chatbot-footer">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Type your message here..." onkeydown="checkEnter(event)">
+            <button class="send-button" onclick="sendMessage()">Send</button>
+        </div>
     </div>
-    <p class="copy">&copy; 2024 Pacifique IRAGUHA Reg_N<sup>o</sup>:23RP01658. All rights reserved.</p>
+    <div class="chat-footer-info">
+        &copy; 2024 Pacifique IRAGUHA Reg_N<sup>o</sup>:23RP01658. All rights reserved.
+    </div>
+
+    <script>
+        function sendMessage() {
+            const chatBody = document.getElementById('chatBody');
+            const chatInput = document.getElementById('chatInput');
+            const message = chatInput.value.trim();
+
+            if (message) {
+                // Display user message
+                const userMessage = document.createElement('div');
+                userMessage.className = 'chat-message message-user';
+                userMessage.textContent = message;
+                chatBody.appendChild(userMessage);
+
+                // Clear input
+                chatInput.value = '';
+                chatBody.scrollTop = chatBody.scrollHeight;
+
+                // Call backend (Flask) to get bot's response
+                fetch('/get_response', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `question=${encodeURIComponent(message)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Display bot's response
+                    const botReply = document.createElement('div');
+                    botReply.className = 'chat-message message-bot';
+                    botReply.textContent = data.response;
+                    chatBody.appendChild(botReply);
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                });
+            }
+        }
+        function checkEnter(event) {
+            // Check if the Enter key (keyCode 13) is pressed
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+    </script>
 </body>
 </html>

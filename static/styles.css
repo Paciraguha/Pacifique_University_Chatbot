@@ -1,0 +1,114 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 1;
+    padding: 0;
+    background-color: #c2eee2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.chatbot-container {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(131, 63, 63, 0.2);
+    padding: 20px;
+    width: 800px;
+    max-width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.chatbot-header {
+    background-color: #3bafed;
+    color: white;
+    padding: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 8px 8px 0 0;
+}
+
+.chatbot-body {
+    flex-grow: 1;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    max-height: 400px;
+    background-color: #f9fafb;
+}
+
+.chat-message {
+    padding: 10px;
+    border-radius: 20px;
+    max-width: 80%;
+    margin: 5px;
+}
+
+.message-user {
+    background-color: #3090da;
+    color: white;
+    align-self: flex-end;
+}
+
+.message-bot {
+    background-color: #45d784;
+    color: #333333;
+    align-self: flex-start;
+}
+
+.chatbot-footer {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    background-color: #fff;
+}
+
+.chat-input {
+    flex-grow: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    outline: none;
+}
+
+.send-button {
+    background-color: #0288d1;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.send-button:hover {
+    background-color: #01579b;
+}
+
+.chat-footer-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    background-color: #a4c9f1;
+    padding: 10px;
+    font-size: 20px;
+    color: #00020a;
+    border-top: 1px solid #cd8383;
+}
+
+.chat-footer-info a {
+    color: #0288d1;
+    text-decoration: none;
+}
+
+.chat-footer-info a:hover {
+    text-decoration: underline;
+}

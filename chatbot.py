@@ -1,32 +1,18 @@
-# Import required libraries
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import string
-import spacy
 import numpy as np
 
-# Download NLTK data (if not already downloaded)
-import nltk.data
 nltk.download('punkt')
 nltk.download('stopwords')
-#nltk.download('punkt')
-#nltk.download('wordnet', download_dir='D:/BTech IT/Advenced Module/Python/chatbot/nltk_data/')  # Add this line
-nltk.data.path.append(r"C:\Users\Iraguha\AppData\Roaming\nltk_data")
-nltk.data.path.append(r"D:\BTech IT\Advenced Module\Python\chatbot\nltk_data")
-#nltk.download('wordnet', download_dir='D:/BTech IT/Advenced Module/Python/chatbot/nltk_data/')  # Add this line
 
-
-# If you are unsure about what you need, you can launch the NLTK downloader GUI:
-nltk.download()
-
-# Initialize Flask app
 app = Flask(__name__)
 
-# Sample question-answer dictionary
+# Use the dictionary instead of loading a CSV file
 qa_dict = {
     "What are the admission requirements?": "Admission requirements vary by program. Please check the admissions page on our website.",
     "When is the application deadline?": "Application deadlines depend on the intake. Please refer to our academic calendar.",
@@ -43,7 +29,7 @@ qa_dict = {
     "What is the application deadline?": "March for Fall intake, October for Spring intake.",
     "How can I apply online?": "Visit the university's website and complete the online application form.",
     "What is the admission process for international students?": "Submit additional documents like visas and English proficiency test results.",
-    "Is there an application fee?": "Yes, the application fee is $50.",
+    "Is there an application fee?": "Yes, the application fee is 500Frw.",
     "Can I apply to multiple programs simultaneously?": "Yes, you can apply to multiple programs.",
     "What documents are required for admission?": "Transcripts, identification, application form, and test scores (if applicable).",
     "Are there any entrance exams required?": "Some programs require entrance exams, like SAT or GRE.",
@@ -64,7 +50,7 @@ qa_dict = {
     "Are there open house or campus tour events for prospective students?": "Yes, open houses are held annually in spring and fall.",
     "Can I reapply if my application is denied?": "Yes, you can reapply after six months.",
     "What undergraduate courses are offered?": "Engineering, Business, Arts, IT, and Health Sciences.",
-    "What graduate programs are available?": "Master’s programs in Business, Science, and Engineering.",
+    "What graduate programs are available?": "BTech’s programs in IT, ETT, RE and ME.",
     "Are there any diploma or certificate courses?": "Yes, diploma and certificate courses are available.",
     "Are there online courses offered?": "Yes, online courses in various fields are offered.",
     "Can I take part-time courses?": "Yes, many courses have part-time options.",
@@ -113,53 +99,83 @@ qa_dict = {
     "Is there a bookstore on campus?": "Yes, the bookstore sells books, merchandise, and supplies.",
     "Are there banking or ATM facilities?": "ATMs are located near the main library and cafeteria.",
     "Is there security on campus?": "Yes, 24/7 security services are available.",
-    "What cultural or recreational activities are offered?": "Cultural festivals, concerts, and recreational clubs are offered.",
-    "Does the campus have outdoor green spaces?": "Yes, there are outdoor parks and gardens on campus.",
-    "Are there on-campus part-time job opportunities?": "Yes, students can work part-time on campus.",
-    "Are pets allowed on campus?": "No, pets are not allowed in campus buildings.",
-    "What safety measures are in place for students?": "Security cameras, emergency hotlines, and patrols ensure safety.",
-    "What sports clubs are available?": "Various sports clubs, including football, basketball, and tennis.",
-    "Are there student clubs or societies?": "Yes, there are several academic, cultural, and recreational societies."
-    # Add more questions and answers as needed
+    "hi": "Hi there! How can I assist you today?",
+    "Hello": "Hello, I'm UniChatbot, your friendly AI assistant! I'm here to help you with any questions about our university, from courses and admissions to campus life and beyond. How can I assist you today?",
+    "Hi!": "Hi there! How can I assist you today?",
+    "who are you?": "Hello, I'm UniChatbot, your friendly AI assistant! I'm here to help you with any questions about our university, from courses and admissions to campus life and beyond. How can I assist you today?",
+    "Thank you": "You're welcome! Let me know if you have more questions.",
+    "Much appreciated": "Happy to help! Feel free to ask anytime.",
+    "Thanks a lot": "You're most welcome. Is there anything else I can assist with?",
+    "Thank you very much": "No problem at all!",
+    "I appreciate your help": "Sure thing!",
+    "Thanks!": "Anytime! Let me know if there's more I can do.",
+    "Cheers!": "Thanks for saying that! I'm glad I could help.",
+    "Cool, thanks!": "I'm here whenever you need assistance!",
+    "Got it, thanks!": "Awesome! If you need further help, just let me know.",
+    "Great, thanks a ton!": "Got it! What's next on your mind?",
+    "Great job!": "Sure! Let me know what you'd like me to assist with further.",
+    "Thanks, that’s perfect!": "Always happy to be your digital assistant!",
+    "Do you provide tutoring services?": "Yes, free tutoring is available for most subjects.",
+    "What is the grading system?": "Grades are based on a 4.0 GPA scale.",
+    "Can I change my major?": "Yes, students can request a change of major.",
+    "Are there advisors for academic planning?": "Yes, each student is assigned an academic advisor.",
+    "How do I register for classes?": "Register through the student portal during registration periods.",
+    "What happens if I fail a course?": "You can retake the course to improve your grade.",
+    "Are there study abroad opportunities?": "Yes, exchange programs are available with partner universities.",
+    "Do you offer research opportunities for undergraduates?": "Yes, undergraduate research opportunities are encouraged.",
+    "Can I take summer classes?": "Yes, summer sessions are available for most programs.",
+    "What is the process for applying for a leave of absence?": "Submit a formal request through the academic office.",
+    "Is there a bookstore on campus?": "Yes, the bookstore sells textbooks, supplies, and university merchandise.",
+    "Do you have a lost and found?": "Yes, the lost and found is located at the security office.",
+    "Are there dining halls on campus?": "Yes, dining halls offer a variety of meal options.",
+    "What are the transportation options on campus?": "Students can use shuttles, bike rentals, or carpooling services.",
+    "Is there a postal service on campus?": "Yes, mail and package services are available.",
+    "What banking services are available on campus?": "ATMs and bank branches are located on campus.",
+    "Are there student lounges?": "Yes, lounges are available for relaxation and group study.",
+    "Do you have a child care center on campus?": "Yes, the child care center is available for student parents.",
+    "Are there art and cultural events?": "Yes, art exhibits, theater performances, and concerts are held regularly.",
+    "Is there a chapel on campus?": "Yes, the chapel is open for prayer and services.",
+    "Do you assist with student visas?": "Yes, our international office helps with visa applications.",
+    "Is there an orientation for international students?": "Yes, a special orientation is held for international students.",
+    "What is the process for currency exchange?": "Currency exchange services are available at the campus bank.",
+    "Can international students work while studying?": "Yes, part-time work is allowed based on visa regulations.",
+    "Are there language support services?": "Yes, English language workshops and courses are available.",
+    "What is your name?": "My name is UniChatbot, your friendly AI assistant!",
+    # Add other Q&A pairs here...
 }
 
-
-# Preprocess text: tokenization, lowercasing, removing stopwords and punctuation
 def preprocess_text(text):
     stop_words = set(stopwords.words('english'))
     tokens = word_tokenize(text.lower())
     tokens = [word for word in tokens if word not in stop_words and word not in string.punctuation]
     return ' '.join(tokens)
 
-# Preprocess questions in the dictionary
+# Preprocess the questions in the dictionary
 preprocessed_questions = [preprocess_text(q) for q in qa_dict.keys()]
 
-# Route for chatbot interface
-@app.route('/', methods=['GET', 'POST'])
-def chatbot():
-    response = ""
-    if request.method == 'POST':
-        user_question = request.form['question']
-        preprocessed_user_question = preprocess_text(user_question)
+@app.route('/')
+def home():
+    return render_template('chatbot.html')
 
-        # Use TF-IDF Vectorizer for vectorization
-        vectorizer = TfidfVectorizer()
-        vectors = vectorizer.fit_transform(preprocessed_questions + [preprocessed_user_question])
-        cosine_similarities = cosine_similarity(vectors[-1], vectors[:-1])
+@app.route('/get_response', methods=['POST'])
+def get_response():
+    user_question = request.form['question']
+    preprocessed_user_question = preprocess_text(user_question)
 
-        # Find the best match
-        best_match_idx = np.argmax(cosine_similarities)
-        best_match_score = cosine_similarities[0, best_match_idx]
+    vectorizer = TfidfVectorizer()
+    vectors = vectorizer.fit_transform(preprocessed_questions + [preprocessed_user_question])
+    cosine_similarities = cosine_similarity(vectors[-1], vectors[:-1])
 
-        # Threshold for similarity
-        threshold = 0.3
-        if best_match_score >= threshold:
-            response = list(qa_dict.values())[best_match_idx]
-        else:
-            response = "Sorry, I don't understand that question."
+    best_match_idx = np.argmax(cosine_similarities)
+    best_match_score = cosine_similarities[0, best_match_idx]
 
-    return render_template('chatbot.html', response=response)
+    threshold = 0.3
+    if best_match_score >= threshold:
+        response = list(qa_dict.values())[best_match_idx]
+    else:
+        response = "Sorry, I don't understand that question."
 
-# Run Flask app
+    return jsonify({'response': response})
+
 if __name__ == '__main__':
     app.run(debug=True)
