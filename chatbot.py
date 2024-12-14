@@ -14,6 +14,7 @@ app = Flask(__name__)
 
 # Use the dictionary instead of loading a CSV file
 qa_dict = {
+    #admission procedures, available courses, campus location, and extracurricular activities and greeting
     "What are the admission requirements?": "Admission requirements vary by program. Please check the admissions page on our website.",
     "When is the application deadline?": "Application deadlines depend on the intake. Please refer to our academic calendar.",
     "Is there an application fee?": "Yes, the application fee is 5000Frw for undergraduate programs and 6000Frw for postgraduate programs.",
