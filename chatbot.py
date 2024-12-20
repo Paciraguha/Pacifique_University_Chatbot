@@ -83,7 +83,7 @@ qa_dict = {
     "Where is the university located?": "The campus is located in [City Name].",
     "How can I get to the campus?": "By public transport, car, or university shuttle.",
     "Are there parking facilities on campus?": "Yes, ample parking is available for students and visitors.",
-    "Does the university provide shuttle services?": "Yes, shuttle services run between campus and key locations.",
+    "Does the university provide shuttle services?": "Yes, shuttle services run between campus and key location.",
     "Are there dormitories or hostels available?": "Yes, dormitories are available for local and international students.",
     "What dining options are available on campus?": "Cafeterias, food courts, and vending machines are on campus.",
     "Is there a gym or fitness center?": "Yes, there is a fully equipped gym and fitness center.",

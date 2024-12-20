@@ -17,6 +17,7 @@
         <div class="chatbot-footer">
             <input type="text" class="chat-input" id="chatInput" placeholder="Type your Question here..." onkeydown="checkEnter(event)">
             <button class="send-button" onclick="sendMessage()">Send</button>
+            <button class="clear-button" onclick="clearChat()">Clear Chat</button>
         </div>
     </div>
     <div class="chat-footer-info">
@@ -84,6 +85,11 @@
             if (event.key === 'Enter') {
                 sendMessage();
             }
+        }
+
+        function clearChat() {
+            const chatBody = document.getElementById('chatBody');
+            chatBody.innerHTML = '<div class="chat-message message-bot">Hello! How can I assist you today?</div>';
         }
     </script>
 </body>

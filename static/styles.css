@@ -1,3 +1,4 @@
+
 body {
     font-family: Arial, sans-serif;
     margin: 1;
@@ -110,4 +111,23 @@ body {
 
 .chat-footer-info a:hover {
     text-decoration: underline;
+}
+.clear-button {
+    background-color: #ff6666; /* Light red color for distinction */
+    color: white; /* White text for contrast */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 15px; /* Button padding */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 14px; /* Adjust font size */
+    margin-left: 10px; /* Add spacing from the 'Send' button */
+    transition: background-color 0.3s ease; /* Smooth color transition */
+}
+
+.clear-button:hover {
+    background-color: #ff4c4c; /* Darker red on hover */
+}
+
+.clear-button:active {
+    background-color: #e63939; /* Even darker red on click */
 }
